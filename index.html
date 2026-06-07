@@ -1,45 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#17120d">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="還命占い">
+<meta name="theme-color" content="#1a1612">
 <title>還命占い</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800;900&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<!-- React + Babel -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
 <style>
-:root{--bg:#0e0a07;--card:#1c140f;--card2:#251a12;--ink:#faecd0;--muted:#cbb18a;--gold:#d8aa5d;--line:#57412a;}
-*{box-sizing:border-box} body{margin:0;padding:18px;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',system-ui,sans-serif;background:radial-gradient(circle at top,#2b1b10,#0d0a07 48%,#050403);color:var(--ink);line-height:1.75} .wrap{max-width:900px;margin:auto} .hero,.panel{border:1px solid var(--line);background:rgba(28,20,15,.92);border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 14px 44px rgba(0,0,0,.28)} h1{margin:0;font-size:30px;letter-spacing:.06em} .sub,.small{color:var(--muted);font-size:13px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media(max-width:640px){.grid{grid-template-columns:1fr}} label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px} input{width:100%;font-size:16px;color:var(--ink);background:#100c09;border:1px solid var(--line);border-radius:14px;padding:12px} button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:16px;font-size:16px;font-weight:800;background:linear-gradient(135deg,#e5bf75,#a16d34);color:#160f08} .status{font-size:13px;color:#efd29b} .err{color:#ffb4a8;background:#3a1714;border:1px solid #7d3a30;border-radius:14px;padding:10px;margin-top:12px;display:none} .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} @media(max-width:720px){.cards{grid-template-columns:1fr 1fr}} .card{border:1px solid var(--line);background:linear-gradient(180deg,var(--card2),var(--card));border-radius:18px;padding:13px} .card b{display:block;color:var(--gold);font-size:13px} .card strong{font-size:32px} .pill{display:inline-block;border:1px solid var(--line);background:#120e0b;border-radius:999px;padding:7px 10px;margin:4px;font-size:14px} h2{font-size:18px;color:#f2c879;margin:0 0 10px} pre{white-space:pre-wrap;background:#100c09;border:1px dashed var(--line);border-radius:16px;padding:12px;color:#f8e7c5;line-height:1.7} .reading{white-space:pre-wrap} .ok{display:inline-block;background:#162716;border:1px solid #426b42;color:#bde2bd;border-radius:999px;padding:4px 10px;font-size:12px;margin-top:8px}
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #1a1612;
+    min-height: 100vh;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: #e8dfd0;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+  #root { min-height: 100vh; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(196,149,106,0.2); border-radius: 3px; }
+  input { -webkit-appearance: none; appearance: none; }
+  button { cursor: pointer; -webkit-appearance: none; appearance: none; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="hero">
-    <h1>還命占い</h1>
-    <div class="sub">v6：元の鑑定ロジック準拠版。入力式。</div>
-    <span class="ok">v6 読み込みOK</span>
-  </div>
-  <div class="panel">
-    <div class="grid">
-      <div><label>名前</label><input id="name" placeholder="例：みき"></div>
-      <div><label>生年月日</label><input id="birth" placeholder="例：1988-08-28 / 1988/8/28 / 19880828"></div>
-      <div><label>対象年</label><input id="targetYear" inputmode="numeric"></div>
-      <div><label>メモ</label><input id="memo" placeholder="任意"></div>
-    </div>
-    <button id="judgeBtn" type="button">鑑定する</button>
-    <div id="err" class="err"></div>
-    <div class="small">年運は「数え年を1桁化」。日の数は「月日を数字ごとに分解して足す」。</div>
-  </div>
-  <div id="result" style="display:none">
-    <div class="panel"><h2>計算結果</h2><div id="numbers" class="cards"></div></div>
-    <div class="panel"><h2>陰陽・五行</h2><div id="balance"></div></div>
-    <div class="panel"><h2>無縁数</h2><div id="muen"></div></div>
-    <div class="panel"><h2>日の数・ライフパス・年運</h2><div id="extras"></div></div>
-    <div class="panel"><h2>読み解き</h2><div id="reading" class="reading"></div></div>
-    <div class="panel"><h2>コピー用</h2><pre id="copy"></pre></div>
-  </div>
-</div>
-<script>
+<div id="root"></div>
+
+<script type="text/babel" data-type="module">
+// HTML版（ブラウザ単体動作・GitHub Pages用）
+const { useState, useEffect, useRef } = React;
 const DICTIONARY = {"positions": {"陽の天": {"title": "陽の天 ── 表に出る思考・発信・考え方", "overview": "陽の天は名誉運が関わる場所でもある。大黒柱、リーダー、まとめ役、昇進、功績など、「人の上に立つ」「看板になる」要素がここに乗る。だから陽の天の数字は、その人がどんなふうにリーダー性を発揮するか、どんな立ち姿で表に出るかを映す。", "entries": {"1": {"key_phrase": "自分から始める力、流れをつくる思考", "reading": "考え方の表面に「自分の軸」がはっきりある。誰かに決められるより、自分で決めて動きたい人。停滞を嫌って、止まっているものを動かしたくなる感覚があり、頭の中だけで終わらせず、形にして流したくなる。1の膀胱の「流す」性質も乗るから、考えたらまず動いてみるタイプ。リーダー性は自然に発揮されやすく、いわゆる「マグロ型」── 止まると死ぬ、進み続けることでバランスを取る人。", "shadow": "自分で全部決めようとして孤独になりやすい。皮肉に言われると「女王様」「ワンマン」と見られることも。", "example": "みき"}, "2": {"key_phrase": "調和を考える思考、相手を含む発想", "reading": "表に出る考え方に、自然と「相手の立場」が入っている。一人で結論を出すより、誰かと一緒に考えたい、関係の中で答えを見つけたい感覚がある。やわらかい思考で、強く押し出すよりも、つなぐこと・橋をかけることに頭が向きやすい。リーダーになるときも、引っ張るというより全体の調和を見ながらまとめるタイプ。", "shadow": "「人任せ」と言われやすい。でも実際は、相手を伺って大事にしたいだけのことも多い。自分の考えを後回しにしすぎて、迷子になりやすい面もある。", "example": ""}, "3": {"key_phrase": "表現したい思考、生き生きした発想", "reading": "考え方の表面に明るさや遊び心がある。ただ堅いだけではなく、心の中に「生き生きしたもの」があって、それが言葉や雰囲気として自然ににじみ出る。発想が柔らかく、人を惹きつける表現の光を持つ人。陽の天に3があると、いわゆる**アイディアマン**になりやすい並びでもある。", "shadow": "出した発想を形にしきれず「口だけ」になってしまう可能性も。気持ちが散りやすく、言葉が先に出てしまうこともある。", "example": "ママ（小夜さん）"}, "4": {"key_phrase": "整えて考える思考、筋を通したい感覚", "reading": "考え方にきちんとした感覚がある。思いつきで流されるより、整えて、筋を通して考えたい人。土台を大事にする発想で、軽く扱われたくないものを心の中に持っている。だから周りからは「しっかりしている」「ちゃんと考えている人」として見られやすく、信頼感のあるリーダー性が出やすい。", "shadow": "真面目ゆえに「自分が正しい」と思い込みやすい。整えすぎて固くなり、変化に対応しづらくなることも。", "example": "みほ姉"}, "5": {"key_phrase": "柔軟な思考、変化に合わせて考え直せる", "reading": "頭の使い方が固定されず、状況に合わせて調整できる。窮屈な枠に閉じ込められると苦しいけれど、そのぶん変化に強い。場に応じて「こうしたい」を変えていける柔らかさがあり、世の中の変化にも適応しやすい人。考え方の中に旅人のような自由さがあり、リーダーになるなら「枠を壊しながら進む」タイプ。", "shadow": "あれもこれも気になって思考が散る。「すべき論」を押し付けられると強く不快感を示しやすい面もある。", "example": "じゅん姉"}, "6": {"key_phrase": "愛と責任を含む思考、人を思う発想", "reading": "考え方の表面に「人を大事にしたい」という気持ちが乗っている。理屈だけで物事を考えるのではなく、「これは誰かのためになるか」「誰かを傷つけないか」がいつも頭の片隅にある人。やさしい思考で、リーダーになるときも「みんなを守りたい」という愛情が動機になりやすい。", "shadow": "八方美人に見られやすい。ただし本人としては、自分のためというより「相手を傷つけたくない」「空気を壊したくない」気持ちが強いことが多い。背負いすぎて疲れることも。", "example": ""}, "7": {"key_phrase": "深く見極める思考、簡単に飲み込まない", "reading": "表に出る思考が最初から軽くない。深く見て、簡単に流されず、自分の中で見極めてから話す人。寡黙そうに見えたり、簡単には乗らない人に見えたりすることもあるけれど、それは冷たさではなく「ちゃんと選びたい誠実さ」から来るもの。考え方に芯と深さがあり、慎重なリーダーシップを発揮しやすい。", "shadow": "あらゆる角度から考える用心深さがあるぶん、固定観念が強くなりやすい。自分を守りたい気持ちが先に立ち、新しい視点を受け入れにくくなる可能性もある。", "example": "パパ（聡さん）、恵子姉、しずかさん"}, "8": {"key_phrase": "決めて進める思考、現実を動かす発想", "reading": "考え方に「形にしたい」「結果を出したい」という意志が乗っている。頭の中で終わらせず、ちゃんと現実に落とし込む発想力があり、決断力もある。リーダー性はかなり強く、いわゆる**人間ブルドーザー**型 ── できることをどんどん進めていく。パワーがあるぶん、ついていける人とそうでない人が分かれやすい立ち姿。", "shadow": "結果を急ぎすぎて周りを置き去りにする。柔らかさより強さが先に出てしまうことも。", "example": ""}, "9": {"key_phrase": "理想を掲げる思考、誰かのための発想", "reading": "考え方の表面に「理想」と「誰かのために」がある。ただ目立ちたいというより、何かや誰かのために理念を立ち上げたくなる人。広い視野を持ち、多くの思考や希望を拾うことができる。リーダーになるなら、大きなビジョンを掲げて人を動かすタイプ。", "shadow": "拾えるものが多いぶん、キャパオーバーになるとダウンしやすい。理想が大きすぎて現実とのギャップに疲れることも。", "example": "たっくん"}}}, "陽の人": {"title": "陽の人 ── 表に出る人間関係・外部との関わり方", "overview": "陽の人は、広い人間関係、外部との交流、不特定多数の人とどう関わるかを映す場所。SNS、職場、初対面、イベント、遠方の人との縁など、「表側のつながり」がここに出る。陽の人の数字は、その人がどんな空気で人と出会い、どんなふうに人脈を広げていくかを表す。", "entries": {"1": {"key_phrase": "自分軸で動く出会い、一目置かれる存在", "reading": "人付き合いは待つより自分から動くタイプ。自分軸が強いため、自然と注目を集めやすく、一目置かれる存在になりやすい。誰かに紹介されるのを待つより、自分で接点をつくり、関係を流れの中で発展させていく。誰かを信頼したり期待する気持ちは薄めで、基本的には**自分で何とかするタイプ**。", "shadow": "一人で動きすぎて、周りを置いてけぼりにすることも。気がついたら孤立していることがある。", "example": "たっくん、恵子姉、しずかさん"}, "2": {"key_phrase": "気の利く関わり、誰かと繋がっていたい人付き合い", "reading": "相手の動きがよく見えるので、気の利く人として周りから感じられやすい。一人は苦手で、**常に誰かと居たい、物理的でなくとも繋がっていたい**という気持ちが強い人。広い人間関係の中でも、争わず、丁寧に関わる姿勢が見えやすい。", "shadow": "合わせすぎて自分が疲れる。一人の時間が取れないと消耗してしまうことも。", "example": ""}, "3": {"key_phrase": "エンターテイナー、表現でつながる関わり", "reading": "人と関わるときに、明るさや遊び心が出る。会話のテンポ、笑い、表現でつながりをつくれる**エンターテイナー**タイプ。場を和ませる力があり、初対面でも距離が縮まりやすい。", "shadow": "表現が先に立つぶん、**真意が伝わりにくい**こともある。本当の気持ちが軽く受け取られてしまうことも。", "example": ""}, "4": {"key_phrase": "律儀な関わり、オンオフを切り替える人付き合い", "reading": "人間関係のオンオフの切り替えが上手で、律儀なので信頼されやすい。広い人間関係の中でも「ちゃんとしている人」「約束を守る人」として見られやすく、ひとつひとつの関係を丁寧に扱う。", "shadow": "**公私混同は苦手**。関係に線を引きすぎると、近づきにくく見えることも。", "example": ""}, "5": {"key_phrase": "どこにでも入れる関わり、自由な人付き合い", "reading": "人間関係も固定せず、いろんなグループに所属できる柔軟さがある。フットワークが軽く、いろんな人と縁をつくれる人。新しい風が入る関係を楽しめる。", "shadow": "どこにでも入れるぶん、**軽く見られやすい**こともある。深い関係が育ちにくい面も。", "example": ""}, "6": {"key_phrase": "愛情深い関わり、近しい人を軸にする人付き合い", "reading": "家族や目下に対しての責任感がつよく、他人と関わるときも基本軸はそこにある。だから付き合う人は決まった人になりやすい。愛想がよく好印象を持たれやすく、頼られやすい。あたたかい愛情が表側ににじみ出るタイプ。", "shadow": "**自分の意見よりも近しい人の意見に左右されやすい**面がある。抱え込みすぎて疲れることも。", "example": "パパ(聡さん)"}, "7": {"key_phrase": "興味で選ぶ関わり、本質を求める人付き合い", "reading": "人間関係も自分が興味のある分野に絞られやすい。誰とでも仲良くするより、本質的に合う人や、深く話せる相手を選びたい感覚がある。", "shadow": "**多くの関係は煩わしく感じやすい**。一線を引きすぎて、近寄りがたく見えることも。", "example": ""}, "8": {"key_phrase": "一気に距離を縮める関わり、関係を動かす力", "reading": "利害の一致や感性の一致で、一気に距離を縮めていけるタイプ。人付き合いにも勢いと意志があり、「この人と関わりたい」と思ったら動ける人。必要だと思った縁には自分から手を伸ばし、関係を現実に育てていく。", "shadow": "押しが強くなりすぎることも。**一方的にならないこと**が大切。", "example": "みき"}, "9": {"key_phrase": "義理と人情の関わり、大きく受けとめる人付き合い", "reading": "人と関わるとき、相手を大きく受けとめる器がある。**義理と人情**を大事にし、面倒見がよく、懐が深く見られやすい。理想や愛情を人に向けやすい人。", "shadow": "義理と人情を重んじすぎて、**切るべき縁を切れない**ままになることも。", "example": "みほ姉、じゅん姉"}}}, "陽の地": {"title": "陽の地 ── 表に出る行動・生活・仕事・お金・現実", "overview": "陽の地は、行動・生活・土地・仕事・お金・現実・足元の表側を映す場所。特に「遠方、外向きの現実変化、仕事やお金を動かすチャレンジ」がここに出る。旅行、出張、県外移動、思い切った転職、投資、外へ打って出る行動など、現実を外向きに動かすときの姿勢を表す。", "entries": {"1": {"key_phrase": "一人でこなす現実、自分で動かす行動", "reading": "チーム戦より、一人でこなす方が得意なタイプ。リモートワークも向いていそう。仕事や生活、お金のことに対しても、自分で決めて始めたい人。一人でふらっと旅行に行くのも好きかもしれない。止まっているより動いている方が自然な人。", "shadow": "動きすぎて消耗することも。", "example": ""}, "2": {"key_phrase": "支え合いで動かす現実、誰かと一緒の行動", "reading": "現実を動かすときも、支え支えられる関係の中で力を発揮する。仕事も生活も、何処へ行くにも誰かと一緒がおちつくタイプ。協力関係や信頼できる相手とのタッグが心地よい人。", "shadow": "相手に頼りすぎてしまうことも。一人で決められず、相手次第で動きが変わってしまうことも。", "example": ""}, "3": {"key_phrase": "独創的な現実、楽しさで動かす行動", "reading": "仕事も私生活も、独創的なセンスで楽しめるタイプ。クリエイティブな発想を現実に活かせる人で、ただ生きるより、表現や創造性を持ち込みたい感覚がある。", "shadow": "突飛なセンスに、周りがついていけない場合も。", "example": ""}, "4": {"key_phrase": "堅実な現実、無難を選ぶ行動", "reading": "仕事や生活、お金のことに対して、ちゃんと地に足をつけたい感覚が強い。崩れすぎないように、土台を整えながら進みたい人。現実の場では「ちゃんとしている人」「信頼できる人」として見られやすく、損はしにくいタイプ。", "shadow": "決まった型に落ち着きがちで、勇気が出ないと無難さを選ぶことも。固さで変化に乗りにくくなる面もある。", "example": "パパ(聡さん)"}, "5": {"key_phrase": "応用力のある現実、変化に強い行動", "reading": "現実面では応用力があり、変化に強いタイプ。同じ場所にじっと留まるより、状況に合わせて暮らしや仕事の形を変えていける柔軟さがある。フリーランスなど、自分のペースで動ける働き方が向いているかもしれない。", "shadow": "本腰を入れるまで時間がかかることも。", "example": "みほ姉"}, "6": {"key_phrase": "賑やかな現実、家族や仲間と動かす行動", "reading": "家族や、大人数でワイワイ出かけたり仕事するのが合っているタイプ。仕事や生活のなかにも「誰かを守りたい」「家族のために」という愛情が乗りやすく、賑やかな場で力を発揮しやすい。", "shadow": "その分、振り回される可能性も。背負いすぎて自分の現実が後回しになることも。", "example": ""}, "7": {"key_phrase": "探求して届ける現実、選び抜く行動", "reading": "仕事や生活でも、勢いで進むより、ちゃんと見極めてから動きたいタイプ。**探求して届ける**(自分の考えを共有する)ことが向いているかもしれない。本当に必要なものを見極め、無駄を削っていく感覚がある。「なんとなく」で続けるのが苦手で、納得したものだけを残したい人。", "shadow": "そもそも伝えるのが不得意な面があるので、いきなり外に出すより、コミュニティに入るのがいいかも。慎重すぎて機会を逃すことも。", "example": "斉藤さん"}, "8": {"key_phrase": "掴みにいく現実、流動的に動かす行動", "reading": "仕事、お金、生活基盤の場面で、自分で積極的に掴みにいける力がある。投資など、未来を見据えた堅実さと挑戦ができるタイプ。思い切りがあるので、お金も流動的に動きやすい。普段は静かに見えても、いざとなったら腹を決めて動ける人。", "shadow": "結果を急ぎすぎて疲れる。柔らかさより強さが先に出てしまうことも。", "example": "たっくん、恵子姉、しずかさん"}, "9": {"key_phrase": "廻す現実、意味を込める行動", "reading": "仕事も生活も「**廻す**」タイプ。ただ生活するだけでなく、現実そのものに理想や意味を込めたい人。仕事や暮らし、お金の使い方にも、価値観や愛情が乗りやすい。「ちゃんと生きる」に思いが宿るタイプで、現実を通して理想を表していく。", "shadow": "理想が大きすぎて現実とのギャップに疲れることも。", "example": "みき、ママ(小夜さん)"}}}, "陰の天": {"title": "陰の天 ── 内側で深まる思考・本質的な信念", "overview": "陰の天は、内で深まる思考、内省、熟成した知恵、深い価値観、静かな哲学を映す場所。陽の天が「表に出る考え方」だとすると、陰の天はその人の本質的な信念、誰にも見せない内側の哲学を表す。一人で考えて深める力、積み上げてきた知識や経験の重み、冷静さや慎重な判断力がここに出る。", "entries": {"1": {"key_phrase": "我が強い内面、自分自身の考えを持つ芯", "reading": "いわゆる**我が強い**タイプ。自分自身の考えが強く出やすく、内側にはかなりはっきりした自分の芯がある。表ではやさしく見えても、本音のところでは「私はこうしたい」「最後は自分で決めたい」がちゃんとある。1が陰の天にあると、その芯はギラギラ見せるタイプではなく、静かに譲らない形で現れる。", "shadow": "内側の芯を誰にも見せられず、孤独になりやすい。表との落差で疲れることも。", "example": "みほ姉、じゅん姉、ママ(小夜さん)"}, "2": {"key_phrase": "来る者拒まず去る者追わずの内面", "reading": "表では孤高に見えても、本質のところでは**来る者拒まず去る者追わず**の柔らかさを持つ人。相手の立場も自然と頭に入っていて、完全な独断にはなりにくい。内側にやさしさがあり、どう折り合うか、どう支えるかを静かに考えているタイプ。", "shadow": "内側でも譲りすぎて、自分の本音がわからなくなることも。", "example": "パパ(聡さん)"}, "3": {"key_phrase": "内側にワクワクを持つ感性", "reading": "**自分自身の内部でワクワクがある人**。表では合わせていても、内側にはちゃんと「自分の感じ方」があり、それが本質を支えている。理屈だけでなく、感覚でものごとを受け取り、自分なりの意味を見つけていくタイプ。", "shadow": "感性を共有できる相手がいないと孤独になりやすい。", "example": "斉藤さん"}, "4": {"key_phrase": "信念を積み上げる内面、誠実な軸", "reading": "内側にしっかりとした信念があり、それを時間をかけて積み上げていくタイプ。一時的な気分で意見が変わるのではなく、ちゃんと考え抜いた「自分の軸」を内側に持っている人。誠実さが内面の核にある。", "shadow": "**安全安心に寄りすぎてしまう**ことも。信念が固くなりすぎて、新しい視点を受け入れにくくなる面もある。", "example": ""}, "5": {"key_phrase": "自由に考える内面、突破力のある思考", "reading": "内側にも自由を求める気持ちがある人。固定された価値観に縛られたくなく、自分の中で常に考えを更新していくタイプ。表は落ち着いて見えても、内側ではいろんな可能性を考えている。**自由に考える力が、問題の突破力になる**ことも。", "shadow": "**注意散漫になりやすい**面がある。内側でも落ち着かず、信念がぶれやすくなることも。", "example": ""}, "6": {"key_phrase": "愛と責任の信念、人を思う内面", "reading": "内面の思考の中心に、愛・守りたい気持ち・責任感がある人。考え方の本音が、ただ理屈ではなく「誰かを大事にしたい」「ちゃんと守りたい」という気持ちに根ざしている。表が冷静でも、その奥にはとても情の深い思考がある。", "shadow": "「家族のため」「愛だから」という思いが強すぎると、**束縛や押しつけになる可能性**も。逆に、それで自分が傷つくことも。", "example": "恵子姉、しずかさん"}, "7": {"key_phrase": "あらゆる探求に臨む内面、常に動く頭", "reading": "**常に頭が動き、あらゆる探求に臨む**人。一つのことを深掘るというより、多方向に同時に深まっていくような知の動き方をする。簡単に飲み込まず、ちゃんと見極めてから納得したい。本物の知恵を内側で育てていくタイプ。", "shadow": "**その探求が周りに理解されない事に苦しむ**ことがある。考えすぎて動けなくなることも。", "example": "みき(ルーチェ本人)"}, "8": {"key_phrase": "決断を秘めた内面、揺るがない意志", "reading": "内側に強い決断力と意志を秘めている人。普段は表に出さなくても、「ここぞ」というときにはちゃんと腹を決められる。本音の部分では妥協を嫌い、自分の進むべき道を見据えている。", "shadow": "内側で決めたことを誰にも相談せず、孤独に背負うことも。", "example": ""}, "9": {"key_phrase": "大きな視野の内面、理想を抱く哲学", "reading": "内側に大きな視野と理想を持つ人。目の前のことだけでなく、もっと広い世界や、もっと深い意味を考えたい感覚がある。本音の哲学に「すべてを包み込む」「世界を良くしたい」という思いが宿りやすい。", "shadow": "理想が大きすぎて現実との折り合いがつかず、内側で消耗することも。", "example": ""}}}, "陰の人": {"title": "陰の人 ── 内側の愛情・近い人との深い絆", "overview": "陰の人は、近い人、深い絆、静かな人付き合い、日常圏の関係を映す場所。陽の人が「広く外向きの人付き合い」だとすると、陰の人は「本当に大切な人にどう向き合うか」を表す。家族、昔馴染み、年上、生活圏の中で信頼を育てる関係、静かな愛情がここに出る。誰を「身内」に入れるか、その人にどんな愛を向けるかが見えてくる場所。", "entries": {"1": {"key_phrase": "自立した愛、深くも縛らない関係", "reading": "近い人にも自分の意志を持って関わるタイプ。深く愛しても相手を縛らず、お互いの自立を尊重できる人。本音のところでは、「この人」と決めた相手にも、依存せず・依存させずの関係を築きたい感覚がある。", "shadow": "自立が強すぎて、相手から距離を感じさせることも。", "example": ""}, "2": {"key_phrase": "寄り添う愛、支え合う絆", "reading": "近い人にはとても寄り添うタイプ。相手の感情や立場を自然と受け止め、支え合いの関係を大事にする。深い絆は、対話と理解の積み重ねでつくっていく人。", "shadow": "寄り添いたい気持ちが強くなりすぎると、**束縛になる可能性**も。相手に合わせすぎて、自分の本音を見失うことも。", "example": ""}, "3": {"key_phrase": "楽しさを共有する愛、ユニークな絆", "reading": "近い人との関係に、明るさや遊び心がある。深刻になりすぎず、笑いや表現を通して絆を深めていくタイプ。本当に大切な人には、自分の感性や面白さをそのまま見せられる人。**愛情表現もユニーク**になりやすい。", "shadow": "重い話や深刻な場面で、つい軽くしてしまうことも。", "example": ""}, "4": {"key_phrase": "", "reading": "近い人との関係では、かなり誠実で堅実なタイプ。軽いノリで近づくより、長く続く関係、安心できる信頼、ちゃんと積み重ねる絆を大事にする。「好きだから適当」ではなく「**好きだからちゃんとする**」に寄りやすい人。本当に近い相手に対しては、かなり真面目に関係を築く。", "shadow": "誠実なぶん、**相手に求めることも多くなりがち**。真面目さが固さになり、関係に余白がなくなることも。", "example": "恵子姉、しずかさん、ママ(小夜さん)"}, "5": {"key_phrase": "囚われない愛、自由を尊重する絆", "reading": "近い人との関係でも、お互いの自由を大事にするタイプ。固定された形より、変化しながら続く関係を心地よく感じる人。深く愛しても、相手の世界を尊重できる。**良くも悪くも囚われない関係性**を築きやすい。", "shadow": "自由を求めすぎて、関係が落ち着かないことも。", "example": ""}, "6": {"key_phrase": "守る愛、家族のような深い絆", "reading": "本当に大切な人を**深く守る**タイプ。広く浅くより、深く狭く、身内に入れた相手にはとことん愛を向ける。6が陰の人にあると、家族愛の数字がそのまま本音の対人関係に出るから、いったん「この人は大事」と入れた相手は簡単には切らない。腎の持久力もあるから、その愛は一時的ではなく、かなり持続力がある。", "shadow": "守りたい気持ちが強すぎて、相手を抱え込むことも。", "example": "たっくん、みほ姉、じゅん姉、みき"}, "7": {"key_phrase": "本質で繋がる愛、選び抜いた絆", "reading": "近い人にも、本質で繋がりたいタイプ。表面的な関わりでは満足できず、深い理解や本当の意味を共有できる相手を選ぶ。一度心を許した相手とは、誰よりも深い対話ができる人。", "shadow": "**一途になりすぎると周りが見えなくなる**ことも。選びすぎて、心を許せる人がごく少数になる面もある。", "example": ""}, "8": {"key_phrase": "本気で選ぶ愛、現実にする絆", "reading": "近い人との関係に、強い意志と決断力が乗る。ただふんわり優しいだけでなく、「この人をちゃんと選ぶ」「この関係を現実にしたい」という腹の座り方がある。本気で愛するときには、関係を育てるために動ける人。", "shadow": "**肩肘をはらない付き合いまで時間がかかる**ことも。関係を「成果」で見すぎてしまう面もある。", "example": "斉藤さん"}, "9": {"key_phrase": "大きく包む愛、理想を込める絆", "reading": "近い人を大きく包み込むタイプ。本音の対人面では、深く包み込み、身近な人ほど大きく受けとめる。9は器が大きい反面、身内だからこそ思いが強く、近い人に対して理想や期待も強くなりやすい。愛情も大きいぶん、関係に重みが出ることもある。", "shadow": "期待や理想が重すぎて、相手にも自分にも負担になることも。", "example": "パパ(聡さん)"}}}, "陰の地": {"title": "陰の地 ── 内側の現実・日常と足元の安心", "overview": "陰の地は、近場、日常、ルーティン、生活基盤、堅実なお金、足元の安定を映す場所。陽の地が「外向きの現実変化」だとすると、陰の地は「自分のフィールドの中で、日常をどう生きるか」を表す。近場での変化、日常の質、生活の手触り、自分の場での自由度がここに出る。一番内側の、生活の体感に近い場所。", "entries": {"1": {"key_phrase": "自分のペースで動く日常、流れを大事にする生活", "reading": "日常や足元の本音は、自分のペースで動きたいタイプ。誰かに合わせるより、自分のリズムで生活を回したい。固定するより、生活の中に自然な流れがあることを大事にする人。", "shadow": "自分のペースが乱れると、生活全体が崩れやすい。", "example": ""}, "2": {"key_phrase": "協力と調和の日常、穏やかな足元", "reading": "日常や足元の本音は、協調・支え合い・穏やかさが大事なタイプ。誰かと協力して整える、柔らかく支え合う、近場では争わず穏やかに回したい感覚が強い。生活の場では、ひとりで全部押し切るより、人と調和しながら回せる人。", "shadow": "周りに合わせすぎて、自分の生活リズムを見失うことも。", "example": "みほ姉、恵子姉、しずかさん、じゅん姉"}, "3": {"key_phrase": "明るさのある日常、遊び心の足元", "reading": "日常や足元の本音に、明るさや遊び心がある。外からは真面目に見えても、近い距離や日常では、意外とおちゃめで、ユーモアがある人。生活の中に少しでも楽しさや表現があるほうが、その人らしさが出やすい。", "shadow": "楽しさが足りないと、日常がしんどくなりやすい。", "example": "パパ(聡さん)"}, "4": {"key_phrase": "整える日常、安定した足元", "reading": "日常や足元の本音は、ちゃんと整えていたい・安定していたいタイプ。生活のリズム、お金の管理、ルーティンの組み方など、地に足のついた感覚を大事にする人。近場や日常では、堅実さと安心感が出やすい。", "shadow": "整えすぎて、変化や予定外のことに弱くなることも。", "example": "斉藤さん"}, "5": {"key_phrase": "自由に動く日常、フィールド内の冒険", "reading": "日常や足元の本音は、固定しすぎたくないタイプ。自分のフィールドの中では自由に動きたい感じが強い。外向きの大きな理想を持ちながらも、日常の中では「自分らしく動ける余白」がすごく大事な人。がっちり縛られると苦しいけど、自分の場ではかなり自在に動ける。", "shadow": "落ち着かず、生活の土台が定まらないことも。", "example": "たっくん、みき"}, "6": {"key_phrase": "愛のある日常、家族を中心にする足元", "reading": "日常や足元の本音に、愛情と責任感がある。生活の中心に「大切な人」がいて、その人のために日常を整えたい感覚がある人。近い人と過ごす時間そのものが、生活の安心になりやすい。", "shadow": "大切な人のために動きすぎて、自分の時間がなくなることも。", "example": ""}, "7": {"key_phrase": "静けさのある日常、深さのある足元", "reading": "日常や足元の本音に、ひとりで考える時間や、自分だけの静かな世界がある。外では人のために動いていても、心の奥では静けさと深さを大事にする人。生活や足元の感覚に、人に見せない内的世界がある。外からは愛情深く動く人に見えても、現実の足元のところでは「ひとりの時間」「静けさ」「自分だけの納得」が大事。", "shadow": "静けさを求めすぎて、日常が孤立気味になることも。", "example": "ママ(小夜さん)"}, "8": {"key_phrase": "決めて整える日常、現実を動かす足元", "reading": "日常や足元の本音に、決断力と実行力が乗る。生活のことでも「こうしたい」と決めたら動ける人。近場や日常の現実でも、ただ受け身ではなく、自分で形にしていきたい感覚がある。", "shadow": "日常まで結果を求めすぎて、休めなくなることも。", "example": ""}, "9": {"key_phrase": "意味を込める日常、理想のある足元", "reading": "日常や足元の本音にも、意味や理想を込めたいタイプ。ただ生活するのではなく、生活そのものに価値や思いが宿ることを求める人。近い場所での暮らしの一つひとつに、自分なりの意味を見つけていく。", "shadow": "日常に意味を求めすぎて、シンプルに楽しめなくなることも。", "example": ""}}}}, "muen": {"overview": "無縁数とは、6つのルーツ数字（A・B・C・a・b・c）に現れなかった数字（1〜9のうち）のこと。命縁占いでは、無縁を「欠点」や「足りない部分」として読まない。無縁は **誰にも縛られない空き地** であり、しがらみのない余白である。誰かに強要されてやるとつらいけれど、自分の意思で「やりたい」と感じたときには、自分なりの形で自由に育てていける場所。この辞書は、9つの数字それぞれが「無縁」として現れたときの読みを、数字の核と6ポジションごとのニュアンスでまとめたもの。", "entries": {"1": {"core": "自分から先頭を切って始めること、ひとりで突破していくこと、自立したリーダーシップを取ることが、自然体で当たり前というわけではないかもしれない。「最初の一歩を自分で切り開く」役割を強要されるとつらくなりやすい。でも無縁は欠点ではなく、誰にも縛られない空き地。自分から「やりたい」と感じたときには、自分なりの始め方で動ける。誰かに指示されるのではなく、必要を感じてから動くのが合っている人。", "field": "「自分で切り開く力」を背負わせる土ではない。だから無理に開拓しようとせず、すでにある流れに乗ったり、誰かと一緒に始めたりする方が自然に育つ。", "positions": {"陽の天": "表向きに「リーダーらしさ」を期待されるとしんどい。考え方や方針の場面で、自分が先頭に立つ役割を強いられないことが大事。", "陽の人": "人付き合いで「自分から先に動く」「主導権を取る」ことを求められると消耗しやすい。受けの形の方が自然。", "陽の地": "仕事や生活の現実面で、ゼロから新しいことを始める役回りは負担になりやすい。ある程度形があるものに乗る方が動きやすい。", "陰の天": "内側で「自分の道は自分で決めなきゃ」と背負いすぎると苦しい。一人で全部決めようとしないこと。", "陰の人": "近しい人との関係で、自分が引っ張る役を強いられるとしんどい。対等か、相手にリードしてもらう関係の方が楽。", "陰の地": "日常や生活の足元で、自分から流れをつくり続ける負担を感じやすい。ルーティンや習慣に頼っていい場所。"}, "example": "パパ(聡さん／陰の人の無縁)、斉藤さん(陰の人の無縁)"}, "2": {"core": "最初から人に合わせて丸く収めること、自分を引いてサポートに回ること、空気を読んで調和をつくることが、自然体で当たり前というわけではないかもしれない。「いい子で合わせて」「波風立てないで」を強いられると苦しくなりやすい。でも無縁は欠点ではない。「合わせる」を義務として背負わなくていい余白だからこそ、自分の意思で必要だと感じたときにだけ、自分なりの調和の取り方ができる。協調性がないのではなく、強制された協調が合わないだけ。", "field": "「人に合わせる土壌」を最初から持っているわけではない。だから無理に調整役を背負うより、自分の畑を育ててから、必要なときに他の畑とつながる方が自然。", "positions": {"陽の天": "表向きに「みんなの意見をまとめる」「丸く収める考え方」を求められるとしんどい。自分の考えを通していい場面の方が力が出る。", "陽の人": "人付き合いで「八方美人」「気を遣う役」を担わされると疲れやすい。広く合わせるより、選んだ相手と関わる方が楽。", "陽の地": "仕事や生活で「みんなのために動くサポート役」を強要されるとつらい。自分の役割を持って動く方が力になる。", "陰の天": "内側で「相手に合わせなきゃ」と思いすぎると、自分の本音を見失う。自分の信念を持っていい場所。", "陰の人": "近しい人との関係で「いつも譲る側」になると消耗しやすい。対等な支え合いの方が自然。", "陰の地": "日常で「周りに合わせて穏やかに」を強いられるとしんどい。自分のリズムを優先していい場所。"}, "example": "たっくん(陰の天の無縁)、みき(陰の天の無縁)"}, "3": {"core": "無邪気にぱっと表現すること、軽やかに自分を出すこと、楽しさやクリエイティビティを当たり前に発揮することが、自然体で簡単にできる場所とは限らない。「もっと明るく」「もっと自由に表現して」と外から求められるとつらくなりやすい。でも無縁は欠点ではない。表現できないのではなく、強制された明るさが合わないだけ。自分の中で「これを表したい」という熱が湧いたときには、誰よりも個性的で深い表現ができる場所でもある。", "field": "「軽やかに花を咲かせる土」を最初から持っているわけではない。だから無理に華やかさを目指すより、まず土を整え、自分の中の「本当に表したいもの」が育つのを待つ方がいい。一度芽吹いた表現は、かなり個性的なものになる。", "positions": {"陽の天": "表向きに「面白い発想」「明るい考え方」を求められるとしんどい。考え方が地味でも構わない、誠実さで勝負していい場所。", "陽の人": "人付き合いで「ムードメーカー」「場を盛り上げる役」を期待されると疲れやすい。落ち着いた関わり方の方が自然。", "陽の地": "仕事や生活で「クリエイティブな成果」「華やかさ」を強いられるとしんどい。地道な現実の積み重ねの方が力になる。", "陰の天": "内側で「もっと自由に発想しなきゃ」と焦らなくていい。深く考えること自体が、その人の表現になっている。", "陰の人": "近しい人との関係で「楽しい話」「軽やかなノリ」を強要されるとつらい。深い対話の方が合っている。", "陰の地": "日常に「楽しさを足さなきゃ」と義務感で考えなくていい。静かな日常そのものが心地よい場所。"}, "example": "たっくん(陰の天の無縁)、みき(陰の天の無縁)、みほ姉(陰の地の無縁)、じゅん姉(陰の地の無縁)"}, "4": {"core": "じっと同じ土台を守り続けること、コツコツひとつの場所で積み上げること、決まったルールや型を真面目に守り続けることが、自然体で当たり前というわけではないかもしれない。「もっとちゃんとして」「真面目に続けて」を強要されると苦しくなりやすい。でも無縁は欠点ではない。安定できないのではなく、強制された型に閉じ込められるのが合わないだけ。自分の中で「ここを守りたい」と思えたものに対しては、誰よりも誠実に続けられる場所でもある。", "field": "「最初から固定された枠」を背負わせる土ではない。だから、ガチガチに型を決めて積み上げるより、流れに合わせて少しずつ形を変えていく方が、自然に育っていく。", "positions": {"陽の天": "表向きに「ちゃんとした人」「真面目な人」を演じ続けるとしんどい。考え方は柔らかくていい、変化していい。", "陽の人": "人付き合いで「礼儀正しい型」「決まった付き合い方」を強要されると疲れやすい。流動的な関わり方の方が自然。", "陽の地": "仕事や生活で「安定した型」「同じ場所に居続けること」を強いられるとつらい。変化のある働き方の方が力になる。", "陰の天": "内側で「正しいやり方」「揺るがない信念」を持たなきゃと焦らなくていい。考え方が変わっていい場所。", "陰の人": "近しい人との関係で「いつも同じ距離感」「決まった役割」を求められるとしんどい。関係の形が変わっていい。", "陰の地": "日常で「きっちりしたルーティン」を守り続けなくていい。生活が揺れることを許していい場所。"}, "example": "たっくん(陰の天の無縁)、みき(陰の天の無縁)、ママ(陰の人の無縁)、パパ(陰の人の無縁)"}, "5": {"core": "軽やかに変化していくこと、ふらりと新しい世界に飛び込むこと、自由に動き回ることが、自然体で当たり前というわけではないかもしれない。「もっと柔軟に」「変化を楽しんで」を強要されるとつらくなりやすい。でも無縁は欠点ではない。変化できないのではなく、強制された自由が合わないだけ。自分の中で「ここから出たい」「変わりたい」と感じたときには、自分なりのペースでちゃんと動ける場所でもある。", "field": "「常に風を受けて変化する土壌」を最初から持っているわけではない。だから無理にあちこち動くより、まず根を張って、自分のタイミングで風に乗る方が自然に育つ。", "positions": {"陽の天": "表向きに「柔軟な発想」「変化に強い人」を期待されるとしんどい。考え方が一貫していていい、揺れなくていい場所。", "陽の人": "人付き合いで「フットワークの軽さ」「いろんな人と関わること」を強要されると疲れやすい。決まった人と深く関わる方が自然。", "陽の地": "仕事や生活で「変化に飛び込むこと」「環境を変え続けること」を強いられるとつらい。落ち着いた現実の方が力になる。", "陰の天": "内側で「常に新しい考えを取り入れなきゃ」と焦らなくていい。自分の信念をじっくり守っていい場所。", "陰の人": "近しい人との関係で「変化を受け入れる役」「相手の自由を全部許す役」を強いられるとしんどい。安定を求めていい。", "陰の地": "日常に「変化を足さなきゃ」と義務で考えなくていい。同じことを繰り返す穏やかさが心地よい場所。"}, "example": "ママ(陰の人の無縁)、パパ(陰の人の無縁)、恵子姉(陰の人の無縁)、しずかさん(陰の人の無縁)"}, "6": {"core": "「愛だから全部背負う」こと、家族や近しい人のために自分を犠牲にすること、無条件に献身することが、自然体で当たり前というわけではないかもしれない。「もっと愛情深く」「もっと尽くして」を強要されると苦しくなりやすい。でも無縁は欠点ではない。愛がないのではなく、強制された献身が合わないだけ。自分の中で「この人を大事にしたい」と心から感じた相手には、自分なりの形で深い愛を向けられる場所でもある。", "field": "「無条件にすべてを与え続ける土」を最初から持っているわけではない。だから無理に背負い込むより、まず自分の畑を満たして、余ったものを分かち合う方が自然に続いていく。", "positions": {"陽の天": "表向きに「みんなを愛する人」「人のために考える人」を演じ続けるとしんどい。自分のことを優先する考え方でいい場所。", "陽の人": "人付き合いで「面倒見のいい人」「みんなのお母さん的役割」を強要されると疲れやすい。自分の都合を優先していい。", "陽の地": "仕事や生活で「家族や周りのために犠牲になること」を強いられるとつらい。自分の人生を生きていい場所。", "陰の天": "内側で「愛で全部包まなきゃ」と思いすぎなくていい。冷静に距離を取る判断をしていい場所。", "陰の人": "近しい人との関係で「無条件の愛情」「完璧な献身」を求められるとしんどい。線を引いていい関係。", "陰の地": "日常で「家族のためだけに生きる」を強要されるとつらい。自分の時間を持っていい場所。"}, "example": "斉藤さん(陽の天の無縁)"}, "7": {"core": "ひとりで深く深く掘り下げること、孤独な探求に時間を捧げること、精神的・哲学的な深みを追い求めることが、自然体で当たり前というわけではないかもしれない。「もっと深く考えて」「ひとりで内省して」を強要されると苦しくなりやすい。でも無縁は欠点ではない。深く考えられないのではなく、強制された孤独が合わないだけ。自分の中で「これを知りたい」と興味が湧いたものに対しては、自分なりの形で深く向き合える場所でもある。", "field": "「孤独に深く根を伸ばす土」を最初から持っているわけではない。だから無理にひとりで掘り下げるより、人との対話や交流の中で気づきを得る方が、自然に深まっていく。", "positions": {"陽の天": "表向きに「深い思考の人」「賢者っぽさ」を求められるとしんどい。直感的に動く考え方でいい場所。", "陽の人": "人付き合いで「深い対話」「精神的な交流」ばかりを求められると疲れやすい。軽い会話やにぎやかな関わりも大事。", "陽の地": "仕事や生活で「ひとりで集中する作業」「孤独な探求」を強いられるとつらい。人と関わる現実の方が力になる。", "陰の天": "内側で「もっと深く考えなきゃ」と焦らなくていい。シンプルに感じることを大事にしていい場所。", "陰の人": "近しい人との関係で「魂の対話」「深い理解」を毎回求められるとしんどい。何気ない時間を共有していい。", "陰の地": "日常で「ひとりの時間を取らなきゃ」と義務で考えなくていい。賑やかな生活を選んでいい場所。"}, "example": "みほ姉(陰の地の無縁)、じゅん姉(陰の地の無縁)"}, "8": {"core": "強く決断して押し出すこと、目に見える結果を出し続けること、力で現実を動かしていくことが、自然体で当たり前というわけではないかもしれない。「もっと結果を出して」「もっと決断して進んで」を強要されるとつらくなりやすい。でも無縁は欠点ではない。決断できないのではなく、強制された推進力が合わないだけ。自分の中で「これは絶対に進めたい」と腹が決まったものに対しては、自分なりの形でちゃんと現実にできる場所でもある。", "field": "「ぐいぐい押して育てる土壌」を最初から持っているわけではない。だから無理に成果を急ぐより、自然な成長を待つ方が結果的に豊かに育つ。", "positions": {"陽の天": "表向きに「強いリーダー」「決断力のある人」を演じ続けるとしんどい。優しさや迷いを見せていい場所。", "陽の人": "人付き合いで「ぐいぐい引っ張る役」「強い影響力」を期待されると疲れやすい。穏やかな関わりの方が自然。", "陽の地": "仕事や生活で「結果を出し続けること」「成功・達成」を強いられるとつらい。プロセスを大事にしていい場所。", "陰の天": "内側で「もっと強くならなきゃ」と自分を責めなくていい。揺れる弱さを許していい場所。", "陰の人": "近しい人との関係で「決断する役」「相手を引っ張る役」を強要されるとしんどい。並んで歩む関係でいい。", "陰の地": "日常で「成果を出し続けるルーティン」を強いられるとつらい。何もしない日があっていい。"}, "example": "ママ(陰の地の無縁)、パパ(陰の天の無縁)"}, "9": {"core": "大きな理想を掲げて世界に奉仕すること、すべてを包み込んで完成させること、視野の広い大きな愛を持ち続けることが、自然体で当たり前というわけではないかもしれない。「もっと広い視野を」「もっと大きな愛で」を強要されるとつらくなりやすい。でも無縁は欠点ではない。理想がないのではなく、強制された大きさが合わないだけ。自分の中で「これは大切にしたい」と感じたものに対しては、自分なりの形で深く尽くせる場所でもある。", "field": "「すべてを包み込む大きな土地」を最初から持っているわけではない。だから無理に世界全体を抱えようとせず、自分の手の届く範囲を丁寧に育てる方が自然。", "positions": {"陽の天": "表向きに「理想を掲げる人」「ビジョンを語る人」を演じ続けるとしんどい。目の前のことを大事にする考え方でいい場所。", "陽の人": "人付き合いで「みんなを包む役」「大きな愛を向ける役」を強要されると疲れやすい。狭く深い関わりの方が自然。", "陽の地": "仕事や生活で「世のため人のために」を強いられるとつらい。自分の幸せのために生きていい場所。", "陰の天": "内側で「もっと大きな視野を持たなきゃ」と焦らなくていい。目の前の感覚を大事にしていい場所。", "陰の人": "近しい人との関係で「すべてを許す役」「完璧に受け止める役」を強要されるとしんどい。線を引いていい関係。", "陰の地": "日常で「意味のある生き方」「奉仕する暮らし」を求められるとつらい。自分のためだけに過ごしていい場所。"}, "example": "斉藤さん(陰の人の無縁)、恵子姉(陽の地の無縁)、しずかさん(陽の地の無縁)"}}}};
 
 // ═══════════════════════════════════════════
@@ -556,74 +560,715 @@ ${muenContext || "なし"}
 
 
 
+// ─── UI Components ───
+function StepCard({ title, icon, children, visible, delay = 0 }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (visible) {
+      const t = setTimeout(() => setShow(true), delay);
+      return () => clearTimeout(t);
+    } else {
+      setShow(false);
+    }
+  }, [visible, delay]);
 
-function parseBirth(s){
-  s=String(s||'').trim();
-  let m=s.match(/^(\d{4})[-\/\.](\d{1,2})[-\/\.](\d{1,2})$/);
-  if(!m) m=s.match(/^(\d{4})(\d{2})(\d{2})$/);
-  if(!m) throw new Error('生年月日は 1988-08-28 / 1988/8/28 / 19880828 の形で入れてね');
-  const y=Number(m[1]), mo=Number(m[2]), d=Number(m[3]);
-  const dt=new Date(y,mo-1,d);
-  if(dt.getFullYear()!==y || dt.getMonth()!==mo-1 || dt.getDate()!==d) throw new Error('存在する日付で入れてね');
-  return {y,mo,d};
+  if (!visible) return null;
+
+  return (
+    <div style={{
+      background: "rgba(20,18,28,0.7)",
+      backdropFilter: "blur(16px)",
+      borderRadius: 16,
+      padding: "24px 20px",
+      marginBottom: 16,
+      boxShadow: "0 2px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
+      border: "1px solid rgba(255,255,255,0.06)",
+      opacity: show ? 1 : 0,
+      transform: show ? "translateY(0)" : "translateY(20px)",
+      transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+        <span style={{ fontSize: 22 }}>{icon}</span>
+        <h3 style={{
+          margin: 0, fontSize: 15, fontWeight: 700,
+          color: "#e8dfd0",
+          fontFamily: "'Zen Maru Gothic', serif",
+          letterSpacing: "0.04em",
+        }}>{title}</h3>
+      </div>
+      {children}
+    </div>
+  );
 }
-function esc(s){return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-function makeResult(){
-  const err=document.getElementById('err'); err.style.display='none'; err.textContent='';
-  try{
-    const name=document.getElementById('name').value.trim() || '対象者';
-    const {y,mo,d}=parseBirth(document.getElementById('birth').value);
-    const ty=Number(document.getElementById('targetYear').value) || new Date().getFullYear();
-    const nums=calculate6Numbers(y,mo,d);
-    const labels=['A','B','C','a','b','c'];
-    const sides={A:'陽',B:'陽',C:'陽',a:'陰',b:'陰',c:'陰'};
-    const poses={A:'天',B:'人',C:'地',a:'天',b:'人',c:'地'};
-    const allNums=labels.map(k=>nums[k]);
-    const muenNums=getMuenNumbers(allNums);
-    const muenAttrs=getMuenAttributes(allNums,muenNums);
-    const yangCount=allNums.filter(n=>n%2===1).length;
-    const yinCount=6-yangCount;
-    const elementCounts={木:0,火:0,土:0,金:0,水:0};
-    allNums.forEach(n=>elementCounts[ORGAN_MAP[n].element]++);
-    const hino=calcHiNoKazu(mo,d);
-    const lifePath=calcLifePath(y,mo,d);
-    const yearFortune=calcYearFortune(y,ty);
-    const resultObj={nums,lifePath,yearFortune,allNums,muenAttrs,yangCount,yinCount,ty};
-    document.getElementById('numbers').innerHTML=labels.map(k=>{const n=nums[k], o=ORGAN_MAP[n]; return `<div class="card"><b>${k}：${sides[k]}の${poses[k]}</b><strong>${n}</strong><div>${n%2?'陽':'陰'}・${o.element}・${o.organ}</div></div>`}).join('');
-    document.getElementById('balance').innerHTML=`<span class="pill">陽 ${yangCount}</span><span class="pill">陰 ${yinCount}</span>`+Object.entries(elementCounts).map(([e,c])=>`<span class="pill">${e}：${c}</span>`).join('')+`<p>${yangCount>yinCount?'陽がやや多め。外へ出す力・動かす力が出やすい型です。':yinCount>yangCount?'陰がやや多め。内側で深め、近いところを大切にする型です。':'陰陽の行き来がしやすいバランス型です。'}</p>`;
-    document.getElementById('muen').innerHTML=muenAttrs.length?muenAttrs.map(m=>`<span class="pill">無縁${m.num}：${ORGAN_MAP[m.num].element}・${ORGAN_MAP[m.num].organ} / ${m.fromNum}から${m.side}の${m.pos}を継承</span>`).join('')+'<p>無縁数は欠点ではなく、誰にも縛られない空き地。強要されると苦しくても、自分から触れたくなった時に育てられる場所です。</p>':'<p>無縁数なし。1〜9がすべて巡っています。</p>';
-    const yearPos=getYearFortunePosition(yearFortune.num, nums, muenAttrs);
-    document.getElementById('extras').innerHTML=`<span class="pill">日の数：${hino}（${NUMBER_MEANINGS[hino]?.title||''}）</span><span class="pill">ライフパス：${lifePath}（${LIFE_PATH_MEANING[lifePath]||''}）</span><span class="pill">${ty}年 数え年：${yearFortune.kazoeDoshi}</span><span class="pill">年運：${yearFortune.num}（${yearPos.position}${yearPos.isMuen?'・無縁':''}）</span>`;
-    document.getElementById('reading').textContent=generateRichReading(resultObj);
-    const copy = [
-      `【対象】${name}`,
-      `【生年月日】${y}/${mo}/${d}`,
-      '',
-      '【計算結果】',
-      labels.map(k => `${k}：${nums[k]}（${poses[k]}）`).join('\n'),
-      '',
-      '【陰陽】',
-      `陽${yangCount}／陰${yinCount}`,
-      '',
-      '【五行・臓腑】',
-      labels.map(k => `${k}：${nums[k]}（${ORGAN_MAP[nums[k]].element}・${ORGAN_MAP[nums[k]].organ}）`).join('\n'),
-      '',
-      '【無縁数】',
-      muenNums.join('・') || 'なし',
-      '',
-      `【日の数】${hino}`,
-      `【ライフパス】${lifePath}`,
-      `【年運】${ty}年：${yearFortune.num}（数え年${yearFortune.kazoeDoshi}）`
-    ].join('\n');
-    document.getElementById('copy').textContent=copy;
-    document.getElementById('result').style.display='block';
-    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(e){err.textContent='エラー：'+(e&&e.message?e.message:e); err.style.display='block';}
+
+function NumberOrb({ label, value, sub, yang = true }) {
+  const color = yang ? "#c4956a" : "#7a8fad";
+  const glow = yang ? "rgba(196,149,106,0.25)" : "rgba(122,143,173,0.2)";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+      <span style={{
+        fontSize: 10, fontWeight: 700, color: yang ? "#c4956a" : "#7a8fad",
+        letterSpacing: "0.1em", fontFamily: "'Zen Maru Gothic', serif",
+      }}>{label}</span>
+      <div style={{
+        width: 48, height: 48, borderRadius: "50%",
+        background: `radial-gradient(circle at 35% 35%, ${color}33, ${color}11)`,
+        border: `2px solid ${color}66`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "#e8dfd0", fontSize: 20, fontWeight: 800,
+        fontFamily: "'Zen Maru Gothic', serif",
+        boxShadow: `0 0 20px ${glow}`,
+      }}>{value}</div>
+      <span style={{
+        fontSize: 10, color: "#777",
+        fontFamily: "'Zen Maru Gothic', serif",
+      }}>{sub}</span>
+    </div>
+  );
 }
-document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('targetYear').value=new Date().getFullYear();
-  document.getElementById('judgeBtn').addEventListener('click',makeResult);
-});
+
+function ElementTag({ num }) {
+  const info = ORGAN_MAP[num];
+  const colors = ELEMENT_COLORS[info.element];
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 3,
+      padding: "3px 10px", borderRadius: 12,
+      background: colors.bg, color: colors.text,
+      fontSize: 12, fontWeight: 600,
+      fontFamily: "'Zen Maru Gothic', serif",
+      border: `1px solid ${colors.accent}44`,
+    }}>
+      {info.emoji} {info.organ}（{info.element}）
+    </span>
+  );
+}
+
+function YinYangBar({ yinCount, yangCount }) {
+  const total = yinCount + yangCount;
+  const yangPct = (yangCount / total) * 100;
+  return (
+    <div>
+      <div style={{
+        display: "flex", justifyContent: "space-between", marginBottom: 8,
+        fontFamily: "'Zen Maru Gothic', serif", fontSize: 13, fontWeight: 600,
+      }}>
+        <span style={{ color: "#c4956a" }}>☀️ 陽 {yangCount}</span>
+        <span style={{ color: "#7a8fad" }}>🌙 陰 {yinCount}</span>
+      </div>
+      <div style={{
+        height: 10, borderRadius: 5,
+        background: "rgba(122,143,173,0.2)",
+        overflow: "hidden",
+      }}>
+        <div style={{
+          height: "100%", width: `${yangPct}%`,
+          background: "linear-gradient(90deg, #c4956a, #d4a574)",
+          borderRadius: 5, transition: "width 1.2s ease",
+        }} />
+      </div>
+    </div>
+  );
+}
+
+function FiveElementChart({ nums }) {
+  const counts = { "木": 0, "火": 0, "土": 0, "金": 0, "水": 0 };
+  nums.forEach(n => { counts[ORGAN_MAP[n].element]++; });
+  const maxCount = Math.max(...Object.values(counts), 1);
+  const elements = [
+    { name: "木", color: "#4a7c59" },
+    { name: "火", color: "#8b3a3a" },
+    { name: "土", color: "#8b7a3a" },
+    { name: "金", color: "#6b3a8b" },
+    { name: "水", color: "#3a5a8b" },
+  ];
+
+  return (
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 14, justifyContent: "center", padding: "12px 0" }}>
+      {elements.map(el => (
+        <div key={el.name} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: "#999", fontFamily: "'Zen Maru Gothic', serif" }}>{counts[el.name]}</span>
+          <div style={{
+            width: 32, borderRadius: 6,
+            height: Math.max(6, (counts[el.name] / maxCount) * 70),
+            background: `linear-gradient(180deg, ${el.color}, ${el.color}88)`,
+            transition: "height 1s ease",
+            boxShadow: `0 0 12px ${el.color}44`,
+          }} />
+          <span style={{ fontSize: 13, fontWeight: 700, color: el.color, fontFamily: "'Zen Maru Gothic', serif" }}>{el.name}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
+// ═══════════════════════════════════════════
+//  Main App
+// ═══════════════════════════════════════════
+function KanmeiUranaiApp() {
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [day, setDay] = useState("");
+  const [targetYear, setTargetYear] = useState(String(new Date().getFullYear()));
+  const [result, setResult] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [aiReading, setAiReading] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    if (result && currentStep < 9) {
+      const t = setTimeout(() => setCurrentStep(s => s + 1), 700);
+      return () => clearTimeout(t);
+    }
+  }, [result, currentStep]);
+
+  useEffect(() => {
+    if (currentStep > 0) {
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 300);
+    }
+  }, [currentStep]);
+
+  function handleCalculate() {
+    const y = parseInt(year);
+    const m = parseInt(month);
+    const d = parseInt(day);
+    const ty = parseInt(targetYear) || new Date().getFullYear();
+    if (!y || !m || !d || m < 1 || m > 12 || d < 1 || d > 31) return;
+
+    const nums = calculate6Numbers(y, m, d);
+    const lifePath = calcLifePath(y, m, d);
+    const yearFortune = calcYearFortune(y, ty);  // ★ 訂正版: 数え年を1桁化するだけ
+    const allNums = [nums.A, nums.B, nums.C, nums.a, nums.b, nums.c];
+    const muenNums = getMuenNumbers(allNums);
+    const muenAttrs = getMuenAttributes(allNums, muenNums);
+    // ★ 陰陽カウントは臓腑説（v3.1）：陽の腑=1,7,8,9,0 / 陰の臓=2,3,4,5,6
+    const YANG_NUMS = [1, 7, 8, 9, 0];
+    const yangCount = allNums.filter(n => YANG_NUMS.includes(n)).length;
+    const yinCount = allNums.length - yangCount;
+    // ★ 日の数（ひのかず）：月+日の各桁を全て足して1桁化（マスター不採用）
+    const hiNoKazu = calcHiNoKazu(m, d);
+
+    setResult({ nums, lifePath, yearFortune, hiNoKazu, allNums, muenNums, muenAttrs, yangCount, yinCount, y, m, d, ty });
+    setCurrentStep(0);
+    setAiReading("");
+    setTimeout(() => setCurrentStep(1), 200);
+  }
+
+  async function generateAIReading() {
+    if (!result) return;
+    setAiLoading(true);
+    setAiReading("");
+
+    // HTML版は辞書ベースの読み解きのみ（API呼び出しなし）
+    try {
+      // 少し待ってから生成（読み込み感を出す）
+      await new Promise(r => setTimeout(r, 400));
+      const fb = generateRichReading(result);
+      setAiReading(fb);
+    } catch (e2) {
+      console.error("Reading generation error:", e2);
+      setAiReading("読み解きの生成中にエラーが発生しました。もう一度お試しください。");
+    }
+    setAiLoading(false);
+  }
+
+  const r = result?.nums;
+  const inputStyle = {
+    width: "100%", padding: "10px 12px", borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.08)", fontSize: 16, fontWeight: 700,
+    fontFamily: "'Zen Maru Gothic', serif", color: "#e8dfd0",
+    background: "rgba(255,255,255,0.04)", outline: "none",
+    boxSizing: "border-box", transition: "border-color 0.3s",
+  };
+
+  // 年運の位置を計算
+  const yearPosInfo = result ? getYearFortunePosition(result.yearFortune.num, result.nums, result.muenAttrs) : null;
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "#0d0b14",
+      backgroundImage: "radial-gradient(ellipse at 20% 0%, rgba(100,80,60,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, rgba(60,70,100,0.1) 0%, transparent 60%)",
+      fontFamily: "'Zen Maru Gothic', 'Hiragino Maru Gothic Pro', serif",
+      padding: "0 0 60px 0",
+      color: "#c0b8a8",
+    }}>
+      <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+      {/* Header */}
+      <div style={{ textAlign: "center", padding: "52px 20px 28px" }}>
+        <div style={{
+          fontSize: 14, letterSpacing: "0.5em", color: "#6a6050",
+          fontFamily: "'Shippori Mincho', serif", marginBottom: 12,
+        }}>— KANMEI —</div>
+        <h1 style={{
+          fontSize: 36, fontWeight: 800, color: "#e8dfd0", margin: "0 0 8px 0",
+          fontFamily: "'Shippori Mincho', serif", letterSpacing: "0.12em",
+          textShadow: "0 0 40px rgba(196,149,106,0.15)",
+        }}>還 命 占 い</h1>
+        <p style={{
+          fontSize: 12, color: "#6a6050", margin: 0,
+          fontFamily: "'Zen Maru Gothic', serif", letterSpacing: "0.06em",
+        }}>数字と五行で、あなたの芯と流れと空き地をあたたかく読む</p>
+      </div>
+
+      {/* Input */}
+      <div style={{ maxWidth: 400, margin: "0 auto", padding: "0 16px" }}>
+        <div style={{
+          background: "rgba(20,18,28,0.6)", backdropFilter: "blur(16px)",
+          borderRadius: 16, padding: "22px 18px", marginBottom: 20,
+          border: "1px solid rgba(255,255,255,0.05)",
+          boxShadow: "0 2px 20px rgba(0,0,0,0.2)",
+        }}>
+          <p style={{
+            fontSize: 13, fontWeight: 700, color: "#a09880", marginBottom: 14,
+            fontFamily: "'Zen Maru Gothic', serif",
+          }}>📅 生年月日</p>
+          <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+            {[
+              { val: year, set: setYear, ph: "1990", label: "年", w: "38%" },
+              { val: month, set: setMonth, ph: "3", label: "月", w: "26%" },
+              { val: day, set: setDay, ph: "24", label: "日", w: "26%" },
+            ].map((f, i) => (
+              <div key={i} style={{ width: f.w }}>
+                <label style={{ fontSize: 10, color: "#6a6050", fontWeight: 600, fontFamily: "'Zen Maru Gothic', serif" }}>{f.label}</label>
+                <input type="number" value={f.val} onChange={e => f.set(e.target.value)}
+                  placeholder={f.ph} style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = "rgba(196,149,106,0.4)"}
+                  onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
+              </div>
+            ))}
+          </div>
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ fontSize: 10, color: "#6a6050", fontWeight: 600, fontFamily: "'Zen Maru Gothic', serif" }}>年運を見る年</label>
+            <input type="number" value={targetYear} onChange={e => setTargetYear(e.target.value)}
+              placeholder="2026" style={{ ...inputStyle, width: 110 }} />
+          </div>
+          <button onClick={handleCalculate} style={{
+            width: "100%", padding: "13px", borderRadius: 12, border: "1px solid rgba(196,149,106,0.3)",
+            background: "linear-gradient(135deg, rgba(196,149,106,0.15), rgba(196,149,106,0.05))",
+            color: "#d4b896", fontSize: 15, fontWeight: 700,
+            fontFamily: "'Shippori Mincho', serif", cursor: "pointer", letterSpacing: "0.1em",
+            boxShadow: "0 0 24px rgba(196,149,106,0.08)",
+            transition: "all 0.2s",
+          }}
+            onMouseDown={e => { e.target.style.transform = "scale(0.97)"; }}
+            onMouseUp={e => { e.target.style.transform = "scale(1)"; }}
+          >
+            占 う
+          </button>
+        </div>
+
+        {/* STEP 1: 6 Numbers */}
+        <StepCard title="基本の6数字" icon="✦" visible={currentStep >= 1}>
+          <p style={{ fontSize: 11, color: "#6a6050", marginTop: 0, marginBottom: 14, fontFamily: "'Zen Maru Gothic', serif" }}>
+            A・B・C＝陽（表の自分）　a・b・c＝陰（内側の自分）
+          </p>
+          <div style={{ marginBottom: 14 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#c4956a", margin: "0 0 8px 0", fontFamily: "'Zen Maru Gothic', serif" }}>☀️ 陽</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: 20 }}>
+              <NumberOrb label="A" value={r?.A} sub="天" yang={true} />
+              <NumberOrb label="B" value={r?.B} sub="人" yang={true} />
+              <NumberOrb label="C" value={r?.C} sub="地" yang={true} />
+            </div>
+          </div>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#7a8fad", margin: "0 0 8px 0", fontFamily: "'Zen Maru Gothic', serif" }}>🌙 陰</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: 20 }}>
+              <NumberOrb label="a" value={r?.a} sub="天" yang={false} />
+              <NumberOrb label="b" value={r?.b} sub="人" yang={false} />
+              <NumberOrb label="c" value={r?.c} sub="地" yang={false} />
+            </div>
+          </div>
+          <div style={{
+            marginTop: 14, padding: "10px 14px", background: "rgba(255,255,255,0.02)",
+            borderRadius: 10, fontSize: 11, color: "#5a5545", lineHeight: 1.8,
+            fontFamily: "'Zen Maru Gothic', serif", border: "1px solid rgba(255,255,255,0.03)",
+          }}>
+            <strong style={{ color: "#8a8070" }}>天</strong>＝精神・思考・頭　
+            <strong style={{ color: "#8a8070" }}>人</strong>＝感情・つながり・お腹　
+            <strong style={{ color: "#8a8070" }}>地</strong>＝行動・生活・足元
+          </div>
+        </StepCard>
+
+        {/* STEP 2: 各ポジションの読み（辞書ベース） */}
+        <StepCard title="各ポジションの読み" icon="📖" visible={currentStep >= 2} delay={100}>
+          {result && [
+            { label: "A", num: r.A, side: "陽", pos: "天" },
+            { label: "B", num: r.B, side: "陽", pos: "人" },
+            { label: "C", num: r.C, side: "陽", pos: "地" },
+            { label: "a", num: r.a, side: "陰", pos: "天" },
+            { label: "b", num: r.b, side: "陰", pos: "人" },
+            { label: "c", num: r.c, side: "陰", pos: "地" },
+          ].map((item, i) => {
+            const entry = getPositionEntry(item.side, item.pos, item.num);
+            return (
+              <div key={i} style={{
+                display: "flex", alignItems: "flex-start", gap: 10,
+                padding: "12px 12px", marginBottom: 8,
+                background: "rgba(255,255,255,0.02)", borderRadius: 10,
+              }}>
+                <div style={{
+                  minWidth: 32, height: 32, borderRadius: "50%",
+                  background: item.side === "陽" ? "rgba(196,149,106,0.12)" : "rgba(122,143,173,0.12)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#e8dfd0", fontSize: 15, fontWeight: 800,
+                  fontFamily: "'Zen Maru Gothic', serif",
+                }}>{item.num}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: item.side === "陽" ? "#c4956a" : "#7a8fad", fontFamily: "'Zen Maru Gothic', serif" }}>
+                      {item.label}（{item.side}の{item.pos}）
+                    </span>
+                    <ElementTag num={item.num} />
+                  </div>
+                  {entry && (
+                    <>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#d4b896", marginBottom: 4, fontFamily: "'Zen Maru Gothic', serif" }}>
+                        ❖ {entry.key_phrase}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#8a8070", fontFamily: "'Zen Maru Gothic', serif", lineHeight: 1.7 }}>
+                        {entry.reading}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </StepCard>
+
+        {/* STEP 3: Yin Yang */}
+        <StepCard title="陰陽バランス" icon="☯" visible={currentStep >= 3} delay={100}>
+          {result && <YinYangBar yangCount={result.yangCount} yinCount={result.yinCount} />}
+          <p style={{
+            fontSize: 12, color: "#8a8070", marginTop: 12, lineHeight: 1.9,
+            fontFamily: "'Zen Maru Gothic', serif",
+          }}>
+            {result && result.yangCount > result.yinCount
+              ? "陽が多め。外向き・明るい・積極的。表に見えやすい面が強く、行動や第一印象で人を惹きつけるタイプ。遠方への縁も。"
+              : result && result.yangCount < result.yinCount
+                ? "陰が多め。内向き・落ち着き・熟成・受容的。内に秘めた本質が深く、近い距離での信頼関係を大切にするタイプ。"
+                : "陰陽のバランスが取れている。内と外を行き来しながら、柔軟に対応できるタイプ。"
+            }
+          </p>
+        </StepCard>
+
+        {/* STEP 4: Five Elements */}
+        <StepCard title="五行・臓腑" icon="🏔" visible={currentStep >= 4} delay={100}>
+          {result && <FiveElementChart nums={result.allNums} />}
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+            {result && result.allNums.map((num, i) => {
+              const labels = ["A（陽天）", "B（陽人）", "C（陽地）", "a（陰天）", "b（陰人）", "c（陰地）"];
+              return (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "6px 10px", background: "rgba(255,255,255,0.02)", borderRadius: 8,
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#6a6050", width: 60, fontFamily: "'Zen Maru Gothic', serif" }}>{labels[i]}</span>
+                  <span style={{ fontSize: 16, fontWeight: 800, color: "#e8dfd0", width: 20, fontFamily: "'Zen Maru Gothic', serif" }}>{num}</span>
+                  <ElementTag num={num} />
+                </div>
+              );
+            })}
+          </div>
+        </StepCard>
+
+        {/* STEP 5: Muen Numbers (辞書ベース) */}
+        <StepCard title="無縁数 ── 空き地と自由" icon="🫧" visible={currentStep >= 5} delay={100}>
+          <p style={{
+            fontSize: 12, color: "#6a6050", marginTop: 0, marginBottom: 10, lineHeight: 1.8,
+            fontFamily: "'Zen Maru Gothic', serif",
+          }}>
+            無縁は欠点ではなく「誰にも縛られない空き地」。<br />
+            自分の意思でやりたいときには、自由に育てていける場所だよ。
+          </p>
+          {result?.muenNums.length === 0 ? (
+            <p style={{ fontSize: 13, color: "#c4956a", fontWeight: 700, fontFamily: "'Zen Maru Gothic', serif" }}>
+              無縁数なし。すべての数字が含まれています。
+            </p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {result?.muenAttrs.map((m, i) => {
+                const muenEntry = getMuenEntry(m.num);
+                const posKey = `${m.side}の${m.pos}`;
+                return (
+                  <div key={i} style={{
+                    padding: "12px 14px", background: "rgba(255,255,255,0.02)",
+                    borderRadius: 10, border: "1px dashed rgba(255,255,255,0.06)",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                      <div style={{
+                        width: 30, height: 30, borderRadius: "50%",
+                        background: "rgba(255,255,255,0.04)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: 14, fontWeight: 800, color: "#a09880",
+                        fontFamily: "'Zen Maru Gothic', serif",
+                        border: "1px dashed rgba(255,255,255,0.1)",
+                      }}>{m.num}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#a09880", fontFamily: "'Zen Maru Gothic', serif" }}>
+                          無縁の{m.num}（{posKey}の位置を継承）
+                        </div>
+                        <div style={{ fontSize: 10, color: "#8a8070", fontFamily: "'Zen Maru Gothic', serif", marginTop: 2 }}>
+                          {m.num}自体は{ORGAN_MAP[m.num].organ}・{ORGAN_MAP[m.num].element}
+                        </div>
+                        <div style={{ fontSize: 10, color: "#555040", fontFamily: "'Zen Maru Gothic', serif", marginTop: 1 }}>
+                          {NUMBER_MEANINGS[m.num]?.title}
+                        </div>
+                      </div>
+                    </div>
+                    {muenEntry && (
+                      <>
+                        <div style={{ fontSize: 11, color: "#8a8070", fontFamily: "'Zen Maru Gothic', serif", lineHeight: 1.7, marginTop: 6 }}>
+                          {muenEntry.core}
+                        </div>
+                        {muenEntry.field && (
+                          <div style={{
+                            marginTop: 8, padding: "6px 10px",
+                            background: "rgba(74,124,89,0.08)",
+                            borderRadius: 8,
+                            fontSize: 10, color: "#8fbc8f",
+                            fontFamily: "'Zen Maru Gothic', serif", lineHeight: 1.7,
+                            border: "1px solid rgba(74,124,89,0.15)",
+                          }}>
+                            🌱 畑のたとえ：{muenEntry.field}
+                          </div>
+                        )}
+                        {muenEntry.positions[posKey] && (
+                          <div style={{
+                            marginTop: 6, padding: "6px 10px",
+                            background: "rgba(122,143,173,0.06)",
+                            borderRadius: 8,
+                            fontSize: 10, color: "#9eb0c8",
+                            fontFamily: "'Zen Maru Gothic', serif", lineHeight: 1.7,
+                          }}>
+                            ◈ {posKey}にあるとき特に：{muenEntry.positions[posKey]}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </StepCard>
+
+        {/* STEP 6: Hi-no-Kazu（日の数） */}
+        <StepCard title="日の数（ひのかず）" icon="🌸" visible={currentStep >= 6} delay={100}>
+          {result && (() => {
+            const hi = result.hiNoKazu;
+            const organInfo = ORGAN_MAP[hi];
+            const sixMap = [
+              { key: "A", num: result.nums.A, label: "陽の天" },
+              { key: "B", num: result.nums.B, label: "陽の人" },
+              { key: "C", num: result.nums.C, label: "陽の地" },
+              { key: "a", num: result.nums.a, label: "陰の天" },
+              { key: "b", num: result.nums.b, label: "陰の人" },
+              { key: "c", num: result.nums.c, label: "陰の地" },
+            ];
+            const matched = sixMap.find(s => s.num === hi);
+            const muenMatch = result.muenAttrs.find(m => m.num === hi);
+            const elemColor = ELEMENT_COLORS[organInfo?.element];
+
+            let statusText = "";
+            let statusColor = "#8a8070";
+            if (matched) {
+              statusText = `${matched.label}（${matched.key}）と一致 ── ここがその人の物語の重心`;
+              statusColor = "#c4956a";
+            } else if (muenMatch) {
+              statusText = `無縁数と一致（${muenMatch.side}の${muenMatch.pos}を継承）── 余白にある日生まれ、自分で育てる隠れたテーマ`;
+              statusColor = "#a09880";
+            } else {
+              statusText = "六数字にも無縁にも該当なし ── 独立した第七の数字として読む";
+            }
+
+            return (
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
+                  <div style={{
+                    width: 54, height: 54, borderRadius: "50%",
+                    background: `radial-gradient(circle at 35% 35%, ${elemColor?.glow || "rgba(196,149,106,0.2)"}, rgba(196,149,106,0.05))`,
+                    border: `2px solid ${elemColor?.accent || "rgba(196,149,106,0.3)"}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "#e8dfd0", fontSize: 22, fontWeight: 900,
+                    fontFamily: "'Shippori Mincho', serif",
+                    flexShrink: 0,
+                  }}>{hi}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#a09880", fontFamily: "'Zen Maru Gothic', serif" }}>
+                      日の数：{hi}（{organInfo?.organ}・{organInfo?.element}）
+                    </div>
+                    <div style={{ fontSize: 10, color: statusColor, fontFamily: "'Zen Maru Gothic', serif", marginTop: 4, lineHeight: 1.6 }}>
+                      {statusText}
+                    </div>
+                  </div>
+                </div>
+                <p style={{
+                  fontSize: 10, color: "#555040", lineHeight: 1.8,
+                  fontFamily: "'Zen Maru Gothic', serif",
+                  marginTop: 8, padding: "6px 10px",
+                  background: "rgba(255,255,255,0.02)",
+                  borderRadius: 8,
+                  border: "1px dashed rgba(255,255,255,0.04)",
+                }}>
+                  ※ 日の数は読み手には明示せず、物語の重心や強調する位置として術者の内側で使う第七の数字。
+                </p>
+              </div>
+            );
+          })()}
+        </StepCard>
+
+        {/* STEP 7: Life Path */}
+        <StepCard title="数秘（ライフパス）" icon="✧" visible={currentStep >= 7} delay={100}>
+          {result && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{
+                display: "inline-flex", width: 60, height: 60, borderRadius: "50%",
+                background: "radial-gradient(circle at 35% 35%, rgba(196,149,106,0.2), rgba(196,149,106,0.05))",
+                border: "2px solid rgba(196,149,106,0.3)",
+                alignItems: "center", justifyContent: "center",
+                color: "#e8dfd0", fontSize: 24, fontWeight: 900,
+                fontFamily: "'Shippori Mincho', serif",
+                boxShadow: "0 0 30px rgba(196,149,106,0.12)",
+                marginBottom: 10,
+              }}>{result.lifePath}</div>
+              <p style={{
+                fontSize: 13, color: "#a09880", fontWeight: 600, lineHeight: 1.8,
+                fontFamily: "'Zen Maru Gothic', serif",
+              }}>
+                {LIFE_PATH_MEANING[result.lifePath] || `ライフパス ${result.lifePath}`}
+              </p>
+              {(result.lifePath === 11 || result.lifePath === 22 || result.lifePath === 33) && (
+                <p style={{ fontSize: 11, color: "#c4956a", marginTop: 6, fontFamily: "'Zen Maru Gothic', serif" }}>
+                  ✦ マスターナンバー
+                </p>
+              )}
+            </div>
+          )}
+        </StepCard>
+
+        {/* STEP 8: Year Fortune (位置情報を強化) */}
+        <StepCard title="年運" icon="🌀" visible={currentStep >= 8} delay={100}>
+          {result && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{
+                fontSize: 12, color: "#6a6050", marginBottom: 8,
+                fontFamily: "'Zen Maru Gothic', serif",
+              }}>{result.ty}年（数え年 {result.yearFortune.kazoeDoshi}歳）</div>
+              <div style={{
+                display: "inline-flex", width: 56, height: 56, borderRadius: "50%",
+                background: "radial-gradient(circle at 35% 35%, rgba(90,130,110,0.2), rgba(90,130,110,0.05))",
+                border: "2px solid rgba(90,130,110,0.3)",
+                alignItems: "center", justifyContent: "center",
+                color: "#e8dfd0", fontSize: 22, fontWeight: 900,
+                fontFamily: "'Shippori Mincho', serif",
+                boxShadow: "0 0 24px rgba(90,130,110,0.1)",
+                marginBottom: 10,
+              }}>{result.yearFortune.num}</div>
+              {yearPosInfo && (
+                <p style={{ fontSize: 12, fontWeight: 700, color: yearPosInfo.isMuen ? "#c4956a" : "#a09880", marginBottom: 8, fontFamily: "'Zen Maru Gothic', serif" }}>
+                  {yearPosInfo.position}{yearPosInfo.isMuen ? " ・ 無縁" : ""}の年
+                </p>
+              )}
+              <p style={{
+                fontSize: 13, color: "#a09880", fontWeight: 600, lineHeight: 1.8,
+                fontFamily: "'Zen Maru Gothic', serif",
+              }}>
+                {YEAR_NUM_MEANING[result.yearFortune.num]}
+              </p>
+              {yearPosInfo?.isMuen && (
+                <div style={{
+                  marginTop: 10, padding: "10px 12px",
+                  background: "rgba(196,149,106,0.06)",
+                  borderRadius: 10,
+                  fontSize: 11, color: "#a09880",
+                  fontFamily: "'Zen Maru Gothic', serif", lineHeight: 1.8,
+                  textAlign: "left",
+                  border: "1px solid rgba(196,149,106,0.12)",
+                }}>
+                  🌱 今年の年運数は無縁数。踏ん張りどころでもあり、しがらみのない自由な年でもあるよ。「良い土づくり」の時期として、自分を整えながら過ごしてね。
+                </div>
+              )}
+            </div>
+          )}
+        </StepCard>
+
+        {/* STEP 9: Reading */}
+        <StepCard title="総合読み解き" icon="🔮" visible={currentStep >= 9} delay={100}>
+          {!aiReading && !aiLoading && (
+            <div style={{ textAlign: "center" }}>
+              <p style={{
+                fontSize: 12, color: "#6a6050", marginBottom: 14,
+                fontFamily: "'Zen Maru Gothic', serif",
+              }}>還命占いの辞書をもとに、あなたの数字を読み解きます</p>
+              <button onClick={generateAIReading} style={{
+                padding: "11px 28px", borderRadius: 12,
+                border: "1px solid rgba(196,149,106,0.3)",
+                background: "linear-gradient(135deg, rgba(196,149,106,0.12), rgba(196,149,106,0.04))",
+                color: "#d4b896", fontSize: 14, fontWeight: 700,
+                fontFamily: "'Shippori Mincho', serif", cursor: "pointer",
+                letterSpacing: "0.08em",
+                boxShadow: "0 0 20px rgba(196,149,106,0.06)",
+              }}>
+                読み解きを生成する
+              </button>
+            </div>
+          )}
+          {aiLoading && (
+            <div style={{ textAlign: "center", padding: 16 }}>
+              <div style={{
+                display: "inline-block", width: 28, height: 28,
+                border: "2px solid rgba(255,255,255,0.06)",
+                borderTopColor: "#c4956a", borderRadius: "50%",
+                animation: "kanmei-spin 0.8s linear infinite",
+              }} />
+              <style>{`@keyframes kanmei-spin { to { transform: rotate(360deg) } }`}</style>
+              <p style={{ fontSize: 12, color: "#6a6050", marginTop: 10, fontFamily: "'Zen Maru Gothic', serif" }}>
+                読み解き中…
+              </p>
+            </div>
+          )}
+          {aiReading && (
+            <div style={{
+              fontSize: 13, color: "#b0a890", lineHeight: 2.1,
+              whiteSpace: "pre-wrap",
+              fontFamily: "'Zen Maru Gothic', serif",
+            }}>
+              {aiReading}
+            </div>
+          )}
+        </StepCard>
+
+        <div ref={bottomRef} />
+
+        {/* Footer */}
+        {currentStep >= 9 && (
+          <div style={{
+            textAlign: "center", padding: "24px 0 0", fontSize: 10,
+            color: "#3a3530", fontFamily: "'Zen Maru Gothic', serif",
+            letterSpacing: "0.04em",
+          }}>
+            還命占い
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+//  Mount to DOM
+// ═══════════════════════════════════════════
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<KanmeiUranaiApp />);
 </script>
 </body>
 </html>
